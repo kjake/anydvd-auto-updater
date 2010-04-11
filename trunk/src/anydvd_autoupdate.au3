@@ -1,4 +1,4 @@
-;#NoTrayIcon
+#NoTrayIcon
 
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=Icon.ico
@@ -8,14 +8,14 @@
 #AutoIt3Wrapper_Change2CUI=N
 #AutoIt3Wrapper_UseUpx=Y
 #AutoIt3Wrapper_UPX_Parameters=--ultra-brute
-#AutoIt3Wrapper_Res_Comment=
+#AutoIt3Wrapper_Res_Comment=http://code.google.com/p/anydvd-auto-updater/
 #AutoIt3Wrapper_Res_Description=AnyDVD Auto Updater
-#AutoIt3Wrapper_Res_Fileversion=0.8.5.6
+#AutoIt3Wrapper_Res_Fileversion=0.8.5.8
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=p
 #AutoIt3Wrapper_Res_LegalCopyright=GPL
 #AutoIt3Wrapper_Res_Language=1033
 #AutoIt3Wrapper_res_requestedExecutionLevel=highestAvailable
-#AutoIt3Wrapper_Res_Field=Homepage|
+#AutoIt3Wrapper_Res_Field=Homepage|http://code.google.com/p/anydvd-auto-updater/
 #AutoIt3Wrapper_Res_Field=Build Date|%date%
 #AutoIt3Wrapper_Au3Check_Parameters=-d -w 1 -w 2 -w 3 -w 4 -w 5 -w 6
 #AutoIt3Wrapper_Run_After=copy "%out%" "..\build\anydvd-auto-updater.exe"
@@ -33,7 +33,7 @@
 #include <Crypt.au3>
 
 Global $g_szName = "AnyDVD Auto Updater"
-Global $g_szVersion = "0.8.5.5"
+Global $g_szVersion = "0.8.5.8"
 Global $g_szTitle = $g_szName & " " & $g_szVersion
 Global $_ProgramFilesDir = "C:\Program Files" ; I know AutoIt has a macro for this, but it doesn't work well
 Global $_installedVersion = ""
@@ -61,7 +61,7 @@ If $_installedVersion == "" Then
 	$_installedVersion = "Not Installed"
 EndIf
 
-HttpSetUserAgent("AnyDVD " & StringReplace($_installedVersion, ".", "0") & ":" & _Crypt_HashData($_installedVersion, $CALG_SHA1) & ":00c43efe")
+HttpSetUserAgent("AnyDVD " & StringReplace($_installedVersion, ".", "0") & ":" & _Crypt_HashData(_Now(), $CALG_SHA1) & ":00c43efe")
 
 Global $downloadPage = _INetGetSource($_verURL, 1)
 Global $verArray = StringRegExp($downloadPage, 'VER:([0-9.]+)', 1)
