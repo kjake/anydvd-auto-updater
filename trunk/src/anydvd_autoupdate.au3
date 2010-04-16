@@ -1,16 +1,13 @@
 #NoTrayIcon
-
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=Icon.ico
 #AutoIt3Wrapper_Outfile=c:\anydvd-auto-updater.exe
 #AutoIt3Wrapper_Compression=4
-#AutoIt3Wrapper_UseX64=N
-#AutoIt3Wrapper_Change2CUI=N
-#AutoIt3Wrapper_UseUpx=Y
 #AutoIt3Wrapper_UPX_Parameters=--ultra-brute
+#AutoIt3Wrapper_UseX64=N
 #AutoIt3Wrapper_Res_Comment=http://code.google.com/p/anydvd-auto-updater/
 #AutoIt3Wrapper_Res_Description=AnyDVD Auto Updater
-#AutoIt3Wrapper_Res_Fileversion=0.8.5.8
+#AutoIt3Wrapper_Res_Fileversion=0.8.9.9
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=p
 #AutoIt3Wrapper_Res_LegalCopyright=GPL
 #AutoIt3Wrapper_Res_Language=1033
@@ -18,13 +15,15 @@
 #AutoIt3Wrapper_Res_Field=Homepage|http://code.google.com/p/anydvd-auto-updater/
 #AutoIt3Wrapper_Res_Field=Build Date|%date%
 #AutoIt3Wrapper_Au3Check_Parameters=-d -w 1 -w 2 -w 3 -w 4 -w 5 -w 6
+#AutoIt3Wrapper_Run_Before=echo %fileversion% > ..\build\anydvd-auto-updater.ver
 #AutoIt3Wrapper_Run_After=copy "%out%" "..\build\anydvd-auto-updater.exe"
 #AutoIt3Wrapper_Run_Tidy=y
 #Tidy_Parameters=/bdir c:\windows\temp\ /kv 1
 #AutoIt3Wrapper_Tidy_Stop_OnError=n
 #AutoIt3Wrapper_Run_Obfuscator=y
-#Obfuscator_Parameters=/cs=1 /cn=1 /cf=1 /cv=1 /sf=1 /sv=1
+#Obfuscator_Parameters=/cs=0 /cn=1 /cf=1 /cv=1 /sf=1 /sv=1
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
+
 
 #include <ProgressConstants.au3>
 #include <StaticConstants.au3>
@@ -32,13 +31,16 @@
 #include <INet.au3>
 #include <Crypt.au3>
 
-Global $g_szName = "AnyDVD Auto Updater"
-Global $g_szVersion = "0.8.5.8"
-Global $g_szTitle = $g_szName & " " & $g_szVersion
+Global Const $s_VersionURL = "http://anydvd-auto-updater.googlecode.com/svn/tags/latest/anydvd-auto-updater.ver"
+Global Const $_verURL = "http://update.slysoft.com/update/AnyDVD.ver"
+Global Const $_getURL = "http://static.slysoft.com/SetupAnyDVD.exe"
+Global Const $g_szName = "AnyDVD Auto Updater"
+Global Const $g_szVersion = FileGetVersion(@ScriptFullPath, "FileVersion")
+Global Const $g_szTitle = $g_szName & " " & $g_szVersion
+Global Const $s_liveVersion = _INetGetSource($s_VersionURL, 1)
 Global $_ProgramFilesDir = "C:\Program Files" ; I know AutoIt has a macro for this, but it doesn't work well
 Global $_installedVersion = ""
-Global $_verURL = "http://update.slysoft.com/update/AnyDVD.ver"
-Global $_getURL = "http://static.slysoft.com/SetupAnyDVD.exe"
+Global $_qResult = -1
 
 If @OSArch == "X64" Then
 	$_ProgramFilesDir = "C:\Program Files (x86)"
@@ -48,10 +50,31 @@ If FileExists($_ProgramFilesDir) == 0 Then
 	$_ProgramFilesDir = @ProgramFilesDir
 EndIf
 
-If WinExists($g_szTitle) Then MsgBox(16, "Error", "Another instance of this program is already running.", 10) ; It's already running
+If WinExists($g_szTitle) Then
+	MsgBox(16, "Error", "Another instance of this program is already running.", 10) ; It's already running
+	Exit 1
+EndIf
 
 AutoItWinSetTitle($g_szTitle)
 AutoItSetOption("WinTitleMatchMode", 2)
+
+If FileExists(@ScriptDir & "\Update.exe") Then
+	;FileDelete(@ScriptDir & "\Update.exe")
+EndIf
+
+If StringStripWS($g_szVersion, 8) <> StringStripWS($s_liveVersion, 8) And $s_liveVersion <> "" And $g_szVersion <> "" Then
+	$_qResult = MsgBox(292, "Update Available", "An update is available for " & $g_szName & "." & @LF & @LF & "Update to v" & $s_liveVersion & " now?", 30)
+	; 6 = Yes
+	; 7 = No
+	If $_qResult == 6 Or $_qResult == -1 Then
+		FileInstall(".\Update.exe", @ScriptDir & "\Update.exe", 0)
+		Run(@ScriptDir & "\Update.exe", @ScriptDir)
+		Exit
+	EndIf
+	$_qResult = -1
+EndIf
+
+RunWait(@ComSpec & ' /c ' & 'SCHTASKS /Create /SC Daily /ST 00:00:00 /TR "' & @ScriptFullPath & '" /RU "" /TN AnyDVDUpdater /F', @SystemDir, @SW_HIDE)
 
 If FileExists($_ProgramFilesDir & "\SlySoft\AnyDVD\AnyDVD.exe") Then
 	$_installedVersion = FileGetVersion($_ProgramFilesDir & "\SlySoft\AnyDVD\AnyDVD.exe", "FileVersion")
