@@ -7,7 +7,7 @@
 #AutoIt3Wrapper_UseX64=N
 #AutoIt3Wrapper_Res_Comment=http://code.google.com/p/anydvd-auto-updater/
 #AutoIt3Wrapper_Res_Description=AnyDVD Auto Updater
-#AutoIt3Wrapper_Res_Fileversion=0.8.9.11
+#AutoIt3Wrapper_Res_Fileversion=0.8.9.12
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=p
 #AutoIt3Wrapper_Res_LegalCopyright=GPL
 #AutoIt3Wrapper_Res_Language=1033
@@ -59,7 +59,7 @@ AutoItWinSetTitle($g_szTitle)
 AutoItSetOption("WinTitleMatchMode", 2)
 
 If FileExists(@ScriptDir & "\Update.exe") Then
-	;FileDelete(@ScriptDir & "\Update.exe")
+	FileDelete(@ScriptDir & "\Update.exe")
 EndIf
 
 If StringStripCR(StringStripWS($g_szVersion, 8)) <> StringStripCR(StringStripWS($s_liveVersion, 8)) And $s_liveVersion <> "" And $g_szVersion <> "" Then
