@@ -7,7 +7,7 @@
 #AutoIt3Wrapper_UseX64=N
 #AutoIt3Wrapper_Res_Comment=http://code.google.com/p/anydvd-auto-updater/
 #AutoIt3Wrapper_Res_Description=AnyDVD Auto Updater
-#AutoIt3Wrapper_Res_Fileversion=0.8.9.10
+#AutoIt3Wrapper_Res_Fileversion=0.8.9.11
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=p
 #AutoIt3Wrapper_Res_LegalCopyright=GPL
 #AutoIt3Wrapper_Res_Language=1033
@@ -62,8 +62,8 @@ If FileExists(@ScriptDir & "\Update.exe") Then
 	;FileDelete(@ScriptDir & "\Update.exe")
 EndIf
 
-If StringStripWS($g_szVersion, 8) <> StringStripWS($s_liveVersion, 8) And $s_liveVersion <> "" And $g_szVersion <> "" Then
-	$_qResult = MsgBox(292, "Update Available", "An update is available for " & $g_szName & "." & @LF & @LF & "Update to v" & StringStripWS($s_liveVersion, 8) & " now?", 30)
+If StringStripCR(StringStripWS($g_szVersion, 8)) <> StringStripCR(StringStripWS($s_liveVersion, 8)) And $s_liveVersion <> "" And $g_szVersion <> "" Then
+	$_qResult = MsgBox(292, "Update Available", "An update is available for " & $g_szName & "." & @LF & @LF & "Update to v" & StringStripCR(StringStripWS($s_liveVersion, 8)) & " now?", 30)
 	; 6 = Yes
 	; 7 = No
 	If $_qResult == 6 Or $_qResult == -1 Then
