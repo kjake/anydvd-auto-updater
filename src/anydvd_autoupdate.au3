@@ -7,7 +7,7 @@
 #AutoIt3Wrapper_UseX64=N
 #AutoIt3Wrapper_Res_Comment=http://code.google.com/p/anydvd-auto-updater/
 #AutoIt3Wrapper_Res_Description=AnyDVD Auto Updater
-#AutoIt3Wrapper_Res_Fileversion=0.8.9.12
+#AutoIt3Wrapper_Res_Fileversion=0.8.9.13
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=p
 #AutoIt3Wrapper_Res_LegalCopyright=GPL
 #AutoIt3Wrapper_Res_Language=1033
@@ -74,7 +74,8 @@ If StringStripCR(StringStripWS($g_szVersion, 8)) <> StringStripCR(StringStripWS(
 	$_qResult = -1
 EndIf
 
-RunWait(@ComSpec & ' /c ' & 'SCHTASKS /Create /SC Daily /ST 00:00:00 /TR "' & @ScriptFullPath & '" /RU "" /TN AnyDVDUpdater /F', @SystemDir, @SW_HIDE)
+RunWait(@ComSpec & ' /c ' & 'SCHTASKS /Delete /TN AnyDVDUpdater /F', @SystemDir, @SW_HIDE)
+RunWait(@ComSpec & ' /c ' & 'SCHTASKS /Create /SC Daily /ST 00:00:00 /TR "' & @ScriptFullPath & '" /RU "" /TN AnyDVDUpdater', @SystemDir, @SW_HIDE)
 
 If FileExists($_ProgramFilesDir & "\SlySoft\AnyDVD\AnyDVD.exe") Then
 	$_installedVersion = FileGetVersion($_ProgramFilesDir & "\SlySoft\AnyDVD\AnyDVD.exe", "FileVersion")
