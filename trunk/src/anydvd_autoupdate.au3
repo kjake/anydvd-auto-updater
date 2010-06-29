@@ -7,7 +7,7 @@
 #AutoIt3Wrapper_UseX64=N
 #AutoIt3Wrapper_Res_Comment=http://code.google.com/p/anydvd-auto-updater/
 #AutoIt3Wrapper_Res_Description=AnyDVD Auto Updater
-#AutoIt3Wrapper_Res_Fileversion=0.8.9.15
+#AutoIt3Wrapper_Res_Fileversion=0.8.9.18
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=p
 #AutoIt3Wrapper_Res_LegalCopyright=GPL
 #AutoIt3Wrapper_Res_Language=1033
@@ -74,8 +74,8 @@ If StringStripCR(StringStripWS($g_szVersion, 8)) <> StringStripCR(StringStripWS(
 	$_qResult = -1
 EndIf
 
-RunWait(@ComSpec & ' /c ' & "SCHTASKS /Delete /TN AnyDVDUpdater /F", @SystemDir, @SW_HIDE)
-RunWait(@ComSpec & ' /c ' & "SCHTASKS /Create /SC Daily /ST 00:00:00 /TR """ & FileGetShortName(@ScriptFullPath) & """ /RU """" /TN AnyDVDUpdater", @SystemDir, @SW_HIDE)
+;RunWait(@ComSpec & ' /c ' & "SCHTASKS /Delete /TN AnyDVDUpdater /F", @SystemDir, @SW_HIDE)
+;RunWait(@ComSpec & ' /c ' & "SCHTASKS /Create /SC Daily /ST 00:00:00 /TR """ & FileGetShortName(@ScriptFullPath) & """ /RU """" /TN AnyDVDUpdater", @SystemDir, @SW_HIDE)
 
 If FileExists($_ProgramFilesDir & "\SlySoft\AnyDVD\AnyDVD.exe") Then
 	$_installedVersion = FileGetVersion($_ProgramFilesDir & "\SlySoft\AnyDVD\AnyDVD.exe", "FileVersion")
@@ -136,9 +136,9 @@ GUIDelete()
 RunWait('"' & @TempDir & '\SetupAnyDVD' & StringReplace($_liveVersion, ".", "") & '.exe" /S', @TempDir)
 
 Global $pid = ProcessWait("AnyDVDtray.exe", 30)
-If $pid == 0 Then
-	Run('"' & $_ProgramFilesDir & '\SlySoft\AnyDVD\AnyDVD.exe"')
-EndIf
+;If $pid == 0 Then
+;	Run('"' & $_ProgramFilesDir & '\SlySoft\AnyDVD\AnyDVD.exe"')
+;EndIf
 
 WinWait("[REGEXPTITLE:AnyDVD.*?; CLASS:#32770]", "", 30)
 WinActivate("[REGEXPTITLE:AnyDVD.*?; CLASS:#32770]")
@@ -149,5 +149,15 @@ WinWait("[REGEXPTITLE:AnyDVD.*?; CLASS:TMainForm]", "", 30)
 WinActivate("[REGEXPTITLE:AnyDVD.*?; CLASS:TMainForm]")
 WinWaitActive("[REGEXPTITLE:AnyDVD.*?; CLASS:TMainForm]", "", 30)
 ControlClick("[REGEXPTITLE:AnyDVD.*?; CLASS:TMainForm]", "&OK", "[CLASS:TButton; INSTANCE:8]")
+
+;; Reboot
+$_qResult = MsgBox(292, "Reboot", "Reboot required to finalize update.  Reboot now?", 30)
+; 6 = Yes
+; 7 = No
+If $_qResult == 6 Or $_qResult == -1 Then
+	Shutdown(22)
+	Exit
+EndIf
+$_qResult = -1
 
 Exit
