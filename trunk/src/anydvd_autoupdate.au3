@@ -5,9 +5,10 @@
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_UPX_Parameters=--ultra-brute
 #AutoIt3Wrapper_UseX64=N
+#AutoIt3Wrapper_Change2CUI=n
 #AutoIt3Wrapper_Res_Comment=http://code.google.com/p/anydvd-auto-updater/
 #AutoIt3Wrapper_Res_Description=AnyDVD Auto Updater
-#AutoIt3Wrapper_Res_Fileversion=0.8.9.18
+#AutoIt3Wrapper_Res_Fileversion=0.8.9.21
 #AutoIt3Wrapper_Res_FileVersion_AutoIncrement=p
 #AutoIt3Wrapper_Res_LegalCopyright=GPL
 #AutoIt3Wrapper_Res_Language=1033
@@ -76,6 +77,15 @@ EndIf
 
 ;RunWait(@ComSpec & ' /c ' & "SCHTASKS /Delete /TN AnyDVDUpdater /F", @SystemDir, @SW_HIDE)
 ;RunWait(@ComSpec & ' /c ' & "SCHTASKS /Create /SC Daily /ST 00:00:00 /TR """ & FileGetShortName(@ScriptFullPath) & """ /RU """" /TN AnyDVDUpdater", @SystemDir, @SW_HIDE)
+
+If (IsArray($CmdLine) And $CmdLine[0] > 0) Then
+	If $CmdLine[1] == "+DelDesktopIcon" Then
+		RegWrite("HKCU\Software\AnyDVD Auto Updater", "DelDesktopIcon", "REG_SZ", "1")
+	ElseIf $CmdLine[1] == "-DelDesktopIcon" Then
+		RegWrite("HKCU\Software\AnyDVD Auto Updater", "DelDesktopIcon", "REG_SZ", "0")
+	EndIf
+EndIf
+
 
 If FileExists($_ProgramFilesDir & "\SlySoft\AnyDVD\AnyDVD.exe") Then
 	$_installedVersion = FileGetVersion($_ProgramFilesDir & "\SlySoft\AnyDVD\AnyDVD.exe", "FileVersion")
@@ -159,5 +169,13 @@ If $_qResult == 6 Or $_qResult == -1 Then
 	Exit
 EndIf
 $_qResult = -1
+
+If RegRead("HKCU\Software\AnyDVD Auto Updater", "DelDesktopIcon") == 1 Then
+	If FileExists(@DesktopCommonDir & "\AnyDVD.lnk") Then
+		FileDelete(@DesktopCommonDir & "\AnyDVD.lnk")
+	ElseIf FileExists(@DesktopDir & "\AnyDVD.lnk") Then
+		FileDelete(@DesktopDir & "\AnyDVD.lnk")
+	EndIf
+EndIf
 
 Exit
